@@ -1,2 +1,10 @@
-handsy: HANDSY.FOR PARCOE.FOR COEWAV.FOR SETABC.FOR GETAMP.FOR
-	gfortran -g HANDSY.FOR COEWAV.FOR GETAMP.FOR PARCOE.FOR SETABC.FOR -Wall -O -fimplicit-none -fbounds-check -o handsy
+
+FC = gfortran
+
+FOPTS = -g -O2 -fimplicit-none -fbounds-check -Wno-unused-label -Wline-truncation
+
+klatt: handsy.for parcoe.for coewav.for setabc.for getamp.for
+	$(FC) $^ $(FOPTS) -o $@
+
+clean:
+	$(RM) klatt

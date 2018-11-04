@@ -8,11 +8,17 @@ C     STORED IN ARRAY C(50)
 C
         SUBROUTINE PARCOE(INITPC)
 C               INITPC INITIALIZES THIS ROUTINE IF =-1
-C
-        IMPLICIT INTEGER*2 (I-N)
-        IMPLICIT REAL*4 (A-D, S, T, P)
-        REAL*4 IMPULS, GETAMP, C(50)
-        INTEGER*2 I(39),NDBSCA(12),NDBCOR(10)
+
+        use, intrinsic:: iso_fortran_env, only: int16, sp=>real32
+        
+        IMPLICIT INTEGER(int16) (I-N)
+        IMPLICIT REAL(sp) (A-D, S, T, P)
+        
+        integer(int16), intent(inout) :: initpc
+        REAL(sp) IMPULS, GETAMP, C(50)
+        INTEGER(int16) I(39),NDBSCA(12),NDBCOR(10)
+        
+        real(sp), parameter :: pi=4.*atan(1.)
 C     INPUT PARAMETER VALUES (CONSTANT AND VARIABLE) PASSED THROUGH I
         COMMON /PARS/ I
         COMMON /COEFS/ C
@@ -46,7 +52,7 @@ C     NAME OF INPUT CONTROL PARAMETERS
      1,(I(34),NNBNZ),(I(35),NNBGS),(I(36),NNSR),(I(37),NNNWS)
      1,(I(38),NNG0),(I(39),NNNFC)
 C     CONSTANTS NEEDED BY SUBROUTINE SETABC
-        DATA PI/3.14159265/
+ 
 C
 C     SCALE FACTORS IN DB FOR GENERAL ADJUSTMENT TO:
 C                    A1  A2  A3  A4  A5  A6  AN  AB  AV   AH  AF AVS
@@ -187,5 +193,5 @@ C     NUMBER OF SAMPLES BEFORE A NEW GLOTTAL PULSE MAY BE GENERATED
 245     CONTINUE
 C     CONVERT INHERENTLY INTEGER PARAMS TO REAL COEFICIENTS
         C(47)=NPULSN
-        RETURN
-        END
+
+        END subroutine parcoe

@@ -2,11 +2,14 @@ C       SETABC.FOR              D.H. KLATT              8/1/78
 C
 C       CONVERT FORMANT FREQENCIES AND BANDWIDTH TO RESONATOR
 C       DIFFERENCE EQUATION CONSTANTS
-C
-        SUBROUTINE SETABC(F,FB,A,B,C)
-C
-        INTEGER*2 F,FB
-        REAL*4 A, B, C, R, PIT, TWOPIT
+
+        elemental SUBROUTINE SETABC(F,FB,A,B,C)
+        use, intrinsic:: iso_fortran_env, only: int16, sp=>real32
+        implicit none
+        
+        INTEGER(int16), intent(in) :: F,FB
+        REAL(sp), intent(out) :: A, B, C
+        real(sp) R, PIT, TWOPIT
         COMMON /PIXX/ PIT,TWOPIT
 C
 C---REPLACE BY R=EXPTAB(FB) FOR FASTER EXECUTION
@@ -21,5 +24,5 @@ C     IF F IS MINUS, COMPUTE A,B,C FOR A ZERO PAIR
 630     A=1./A
         B=-A*B
         C=-A*C
-        RETURN
-        END
+
+        END SUBROUTINE SETABC

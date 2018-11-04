@@ -12,11 +12,17 @@ C               IWAVE IS AN ARRAY IN WHICH WAVEFORM SAMPLES ARE PLACED
 C                 LEFT-JUSTIFIED IN A 36-BIT WORD
 C               OUTMA IS RETURN ARG INDICATING MAX ABSOL. VALUE OF WAVE
 C                 IF CALLING PROGRAM SETS TO -1., COEWAV IS INITIALIZED
-C
-        IMPLICIT INTEGER*2 (I-N, W)
-        IMPLICIT REAL*4 (A-D, P, S, U, X,Y)
-        REAL*4 NOISE,INPUTS,INPUT,IMPULS, C(50), OUTMA
-        INTEGER*2 IWAVE(50)
+
+        use, intrinsic:: iso_fortran_env, only: int16, sp=>real32
+        
+        IMPLICIT INTEGER(int16) (I-N, W)
+        IMPLICIT REAL(sp) (A-D, P, S, U, X,Y)
+        
+      INTEGER(int16), intent(inout) :: IWAVE(50)
+      real(sp), intent(inout) :: outma
+        
+        REAL(sp) NOISE,INPUTS,INPUT,IMPULS, C(50)
+
         COMMON /COEFS/ C
 C     COEFICIENT VALUES IN C(50) ARE REAL
         EQUIVALENCE (C(1),IMPULS),(C(2),SINAMP),(C(3),AFRICI)
@@ -260,5 +266,5 @@ C     TRUNCATE WAVEFORM SAMPLES TO ABS[WAVMA]
         ULIPS=WAVMAX
 520     IWAVE(NTIME)=ULIPS
 530     CONTINUE
-540     RETURN
-        END
+
+        END subroutine coewav
