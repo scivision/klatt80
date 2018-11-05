@@ -1,3 +1,6 @@
+__pycache__/
+*.pyc
+klatt.exe
 *.raw
 *.wav
 klatt

@@ -24,6 +24,7 @@ C   EACH OF THE FOLLOWING VARIABLES HOLDS UP TO 5 ASCII CHARACTERS
       integer :: u, ios
       character(:), allocatable :: paramfn, outfn
       character(80) :: buf
+      logical :: interactive
 C
 C   3-CHARACTER SYMBOL FOR EACH OF 39 CONTROL PARAMETER VALUES
         DATA NAMES /'AV','AF','AH','AVS','F0','F1','F2','F3','F4','FNZ',
@@ -68,8 +69,10 @@ C   NAMES OF SOME RESPONSE CHARACTERS
         call get_command_argument(1,buf,status=ios)
         if(ios==0) then
           paramfn=trim(buf)
+          interactive=.false.
         else
           goto 1140
+          interactive=.true.
         endif
         
       
@@ -251,8 +254,9 @@ C     ACCEPT MODIFICATIONS TO PARAMETER TRACKS
 2050    OLDTIM=0
         SETPNT=NO
         MAXD1=UTTDUR-DELTAT
-        WRITE (6,2060)
-2060    FORMAT (' NAME OF PARAMETER TRACK TO BE MODIFIED (QUIT="Q"):')
+        
+        if (.not.interactive) goto 2600
+        print *,' NAME OF PARAMETER TRACK TO BE MODIFIED (QUIT="Q"):'
 2065    READ (5,1260,ERR=2090) NAMEV
 2075    IF (NAMEV == 'q' .or. namev=='') GO TO 2600
         DO 2080 N=1,NVAR
@@ -268,7 +272,7 @@ C     ACCEPT MODIFICATIONS TO PARAMETER TRACKS
         MINV=MINVAL(LOC(N))
 2180    WRITE (6,2200)
 2200    FORMAT ('  T='$)
-2220    READ (5,2240,ERR=2550) TIME
+2220    READ (5,2240) TIME
 2240    FORMAT (I5)
 C
 C   QUIT DRAWING CURRENT PARAMETER CONTOUR?
@@ -290,7 +294,7 @@ C   MAKE SURE LEGAL TIME
         POINTR=((NPTS)*NSAMP)+N
 2330    WRITE (6,2340)
 2340    FORMAT ('  V='$)
-2345    READ (5,1900,ERR=2550) VALUE
+2345    READ (5,1900) VALUE
 C
 C     SEE IF LEGAL VALUE 
 2369    IF (VALUE.LE.MAXV) GO TO 2400
@@ -321,11 +325,7 @@ C   DRAW A LINE
         POINTR=((TIME1+M)*NSAMP)+N
 2500    D(POINTR)=VALUE2
         GO TO 2460
-C
-C   UNRECOVERABLE I/O ERROR, SAVE PARAMETERSAND QUIT
-2550    WRITE (6,2560)
-2560    FORMAT (' UNRECOVERABLE TYPING ERROR, SAVE PARAMETERS')
-C
+
 C   MAKE FILE OF PARAMETER VALUES VS TIME THAT CAN BE LISTED
 C   ON LINE PRINTER
 2600    OPEN(newUNIT=u,FILE='PARAM.DOC',ACCESS='SEQUENTIAL',
