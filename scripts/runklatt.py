@@ -14,7 +14,7 @@ if os.name == 'nt':
 
 def runklatt(phoneme):
 
-    paramfn = 'docs-ja/' + phoneme + '.DOC'
+    paramfn = 'docs-en/' + phoneme + '.DOC'
 
     subprocess.check_call([exe, paramfn])
 
