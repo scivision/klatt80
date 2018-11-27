@@ -1,4 +1,7 @@
+[![Build Status](https://travis-ci.com/scivision/klatt80.svg?branch=master)](https://travis-ci.com/scivision/klatt80)
+
 # klatt80
+
 Klatt Cascade-Parallel Formant Synthesizer
 
 This software is a speech synthesizer designed by Dennis Klatt in 1980. 

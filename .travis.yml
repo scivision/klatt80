@@ -1,0 +1,32 @@
+language: c
+group: travis_latest
+
+git:
+  depth: 3
+  quiet: true
+  
+env: FC=gfortran
+
+addons:
+  apt:
+    packages: 
+    - gfortran
+
+matrix:
+  include:
+  - os: linux
+#  - os: osx
+ #   before_install:
+  #  - brew install gcc > /dev/null # works but commented to save time
+  - os: windows
+    language: sh
+    install: 
+    - cd bin
+    - cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
+
+install:
+- cd bin
+- cmake ..
+
+script: cmake --build .
+
