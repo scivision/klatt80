@@ -8,8 +8,10 @@ C
 C   IF THIS PROGRAM DOES NOT FIT INTO CORE, DECREASE D(10050),
 C   IWAVE(10050), AND WSIZE ALL BY THE SAME FRACTION
       program klatt80
-      use, intrinsic:: iso_fortran_env, only: int16, sp=>real32
+      use, intrinsic:: iso_fortran_env, only: int16, sp=>real32, 
+     &      stderr=>error_unit
       IMPLICIT INTEGER(int16) (A-Z)
+
       REAL(sp) DB,DBLPNT,EPSLON,XMAXWA
 C   EACH OF THE FOLLOWING VARIABLES HOLDS UP TO 5 ASCII CHARACTERS
       CHARACTER(5) QUIT,QUIT1,YES,NO,VAR,CON,ANSWER,MODPAR,SETPNT,DUMMY,
@@ -184,21 +186,22 @@ C   AND PLACE NAMES IN NAMEX(NVAR)
         DENOM=VALUES(36)/10
         DELTAT=(NSAMP*100)/DENOM
         NVAR=0
-        DO 1760 N=1,39
-        IF (VARPAR(N).EQ.0) GO TO 1760
+      DO N=1,39
+        IF (VARPAR(N).EQ.0) cycle
         NVAR=NVAR+1
         LOC(NVAR)=N
         NAMEX(NVAR)=NAMES(N)
-1760    CONTINUE
-        IF (NVAR.GT.0) GO TO 1800
-        WRITE(6,1780)
-1780    FORMAT (' ILLEGAL CONFIG, NO VARIABLE PARAMS, TRY AGAIN')
+      enddo
+
+      IF (NVAR<=0) then
+        write(stderr,*) 'ILLEGAL CONFIG, NO VARIABLE PARAMS, TRY AGAIN'
         GO TO 1680
-1800    MAXDUR=((WSIZE/NSAMP)*DELTAT)-20
-        WRITE (6,1820) NVAR
-1820    FORMAT (/' THERE ARE ',I2,' VARIABLE PARAMETERS')
-        WRITE (6,1840) DELTAT
-1840    FORMAT (' PARAMETERS ARE TO BE SPECIFIED EVERY ',I2,' MSEC')
+      endif
+
+        MAXDUR=((WSIZE/NSAMP)*DELTAT)-20
+        print '(A,I2,A)',' THERE ARE ',NVAR,' VARIABLE PARAMETERS'
+        print '(A,I2,A)', ' PARAMETERS ARE TO BE SPECIFIED EVERY ',
+     &        DELTAT,' MSEC'
 1860    IF (OPENPA.EQ.0) GO TO 1870
         READ(u,2625) VALUE
         WRITE (6,1867) VALUE
@@ -236,11 +239,16 @@ C     PUT VARIABLE DATA FROM FILE PARAM.DOC INTO PARAMETER TRACKS
         READ(u,2043) DUMMY,(DUMMY,M=1,NVAR1)
 2043    FORMAT (27A5)
         NVAR1=0
-        DO 2045 N=1,NVAR
-        IF (VARPAR(LOC(N)) /= 2) GO TO 2045
+      DO N=1,NVAR
+        IF (VARPAR(LOC(N)) /= 2) cycle
         NVAR1=NVAR1+1
         LOCSAV(NVAR1)=N
-2045  IF (NVAR1 == 0) error stop 'ILLEGAL CONFIG, NO VARIABLE PARAMS'
+      enddo
+      
+      IF (NVAR1 == 0) then
+        write(stderr,*) 'ILLEGAL CONFIG, NO VARIABLE PARAMS'
+        stop 1
+      endif
 
 2047    IF (NVAR1.GT.26) NVAR1=26
         NSAMT1=(UTTDUR/DELTAT)-1
@@ -329,7 +337,7 @@ C   DRAW A LINE
 C   MAKE FILE OF PARAMETER VALUES VS TIME THAT CAN BE LISTED
 C   ON LINE PRINTER
 2600    OPEN(newUNIT=u,FILE='PARAM.DOC',ACCESS='SEQUENTIAL',
-     &       status='replace', action='write')
+     &       status='replace', action='readwrite')
         DO 2620 M=1,13
         N=M+13
         N1=M+26
@@ -348,7 +356,7 @@ C   ON LINE PRINTER
         LOCSAV(NVAR1)=N
 2630    CONTINUE
         IF (NVAR1.GT.0) GO TO 2640
-        WRITE (6,1780)
+        write(stderr,*) 'ILLEGAL CONFIG, NO VARIABLE PARAMS, TRY AGAIN'
         GO TO 2900
 2640    IF (NVAR1.GT.26) NVAR1=26
         WRITE (u,2650) (NAMEX(LOCSAV(M)),M=1,NVAR1)
