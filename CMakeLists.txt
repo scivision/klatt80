@@ -13,7 +13,6 @@ elseif(CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL Flang)
   # Flang 6 didn't work right for any -Ox level
   list(APPEND FFLAGS -O1)
-  list(APPEND FLIBS -static-flang-libs)
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL PGI)
   # PGI 18.10 didn't work right for any -Ox level
   list(APPEND FFLAGS -O1)
