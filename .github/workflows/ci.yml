@@ -1,0 +1,48 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Install packages
+      run: |
+        sudo apt install -yq --no-install-recommends ninja-build gfortran
+        pip install meson
+    - name: Meson configure
+      run: meson setup build
+    - name: Meson build
+      run: ninja -C build
+
+  macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install packages
+      run: brew install gcc
+    - name: Cmake configure
+      run: cmake -B build
+    - name: Cmake build
+      run: cmake --build build --parallel
+
+  windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Install packages
+      run: |
+        cinst -y ninja
+        pip install meson
+    - name: Meson configure
+      run: meson setup build
+    - name: Meson build
+      run: ninja -C build

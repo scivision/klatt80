@@ -1,21 +1,22 @@
-[![Build Status](https://travis-ci.com/scivision/klatt80.svg?branch=master)](https://travis-ci.com/scivision/klatt80)
+[![Actions Status](https://github.com/scivision/klatt80/workflows/ci/badge.svg)](https://github.com/scivision/klatt80/actions)
 
 # klatt80
 
 Klatt Cascade-Parallel Formant Synthesizer
 
-This software is a speech synthesizer designed by Dennis Klatt in 1980. 
+This software is a speech synthesizer designed by Dennis Klatt in 1980.
 
 The original routines are programmed for DEC PDP-11 FORTRAN, and code was updated for generic modern Fortran compilers.
-Due to old/unstable progamming techniques, compiler optimization option `-O1` is typically necessary.
+Due to old / unstable progamming techniques, compiler optimization option `-O1` is typically necessary.
 
 
 ## Build
+
 Assuming you have a Fortran compiler and CMake, do:
+
 ```sh
-cd bin
-cmake ..
-cmake --build .
+meson build
+meson test -C build
 ```
 
 ## Raw to WAV
@@ -29,8 +30,10 @@ Sample rate is 10 kHz.
 ```sh
 ./klatt  paramfile
 ```
-allows specifying a parameter file at the command line. 
+
+allows specifying a parameter file at the command line.
 Otherwise,
+
 ```sh
 ./klatt
 ```

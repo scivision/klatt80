@@ -5,7 +5,7 @@ list(APPEND FFLAGS -g)
 
 if(CMAKE_Fortran_COMPILER_ID STREQUAL GNU)
   # Gfortran doesn't work for -O0
-  list(APPEND FFLAGS -fimplicit-none -fbounds-check -Wno-unused-label -Wline-truncation)
+  list(APPEND FFLAGS -std=legacy -fimplicit-none -fbounds-check -Wno-unused-label -Wline-truncation)
   list(APPEND FFLAGS -O1)
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
   # Intel doesn't work for -O0, -O2, -O3
@@ -20,4 +20,3 @@ endif()
 
 add_executable(klatt handsy.for parcoe.for coewav.for setabc.for getamp.for)
 target_compile_options(klatt PRIVATE ${FFLAGS})
-target_link_libraries(klatt PRIVATE ${FLIBS})

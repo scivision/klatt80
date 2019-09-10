@@ -5,12 +5,12 @@ dist: xenial
 git:
   depth: 3
   quiet: true
-  
+
 env: FC=gfortran
 
 addons:
   apt:
-    packages: 
+    packages:
     - gfortran
 
 matrix:
@@ -21,7 +21,7 @@ matrix:
   #  - brew install gcc > /dev/null # works but commented to save time
   - os: windows
     language: sh
-    install: 
+    install:
     - cd bin
     - cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
 
@@ -30,4 +30,3 @@ install:
 - cmake ..
 
 script: cmake --build .
-
