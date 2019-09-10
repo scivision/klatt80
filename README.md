@@ -16,16 +16,17 @@ Assuming you have a Fortran compiler and CMake, do:
 
 ```sh
 meson build
-meson test -C build
+ninja -C build
 ```
 
-## Raw to WAV
-
-An example is given under `scripts/` of converted `int16` RAW to WAV.
-This is not necessary if loading into Python/Matlab.
-Sample rate is 10 kHz.
 
 ## Usage
+
+```sh
+python runklatt.py AA
+```
+
+where `AA` is the phoneme under the `-d` directory.
 
 ```sh
 ./klatt  paramfile
@@ -44,6 +45,11 @@ This file is easily read by any analysis program, or converted to WAV.
 Some Matlab / GNU Octave scripts are given under `scripts/` and are self-explanatory.
 
 
+### Raw to WAV
+
+An example is given under `scripts/` of converted `int16` RAW to WAV.
+This is not necessary if loading into Python/Matlab.
+Sample rate is 10 kHz.
 
 ## Notes
 

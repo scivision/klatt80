@@ -2,18 +2,15 @@
 import numpy as np
 import sounddevice
 import time
+from pathlib import Path
 
 FS = 10000
 
 
-def playklatt(fn):
+def playklatt(fn: Path):
     dat = np.fromfile(fn, np.int16)
 
     dat *= 32768 // dat.max()
     sounddevice.play(dat, FS)
 
-    time.sleep(1.)
-
-
-if __name__ == '__main__':
-    playklatt('wave.raw')
+    time.sleep(1.0)
