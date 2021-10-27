@@ -15,6 +15,12 @@ def load_klatt(fn: Path) -> np.ndarray:
     return dat
 
 
+def raw2wav(dat: np.ndarray, wavfn: Path):
+    import scipy.io.wavfile
+
+    scipy.io.wavfile.write(wavfn, FS, dat)
+
+
 def playklatt(dat: np.ndarray):
     import sounddevice
 
