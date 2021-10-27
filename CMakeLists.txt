@@ -1,22 +1,29 @@
-cmake_minimum_required(VERSION 3.1)
-project(klatt80 Fortran)
+cmake_minimum_required(VERSION 3.15...3.22)
 
-list(APPEND FFLAGS -g)
+project(klatt80
+LANGUAGES Fortran
+)
 
-if(CMAKE_Fortran_COMPILER_ID STREQUAL GNU)
-  # Gfortran doesn't work for -O0
-  list(APPEND FFLAGS -std=legacy -fimplicit-none -fbounds-check -Wno-unused-label -Wline-truncation)
-  list(APPEND FFLAGS -O1)
-elseif(CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
-  # Intel doesn't work for -O0, -O2, -O3
-  list(APPEND FFLAGS -O1)
-elseif(CMAKE_Fortran_COMPILER_ID STREQUAL Flang)
-  # Flang 6 didn't work right for any -Ox level
-  list(APPEND FFLAGS -O1)
-elseif(CMAKE_Fortran_COMPILER_ID STREQUAL PGI)
-  # PGI 18.10 didn't work right for any -Ox level
-  list(APPEND FFLAGS -O1)
-endif()
+enable_testing()
 
-add_executable(klatt handsy.for parcoe.for coewav.for setabc.for getamp.for)
-target_compile_options(klatt PRIVATE ${FFLAGS})
+add_compile_options(
+"$<$<Fortran_COMPILER_ID:GNU>:-O1;-std=legacy;-fimplicit-none;-fbounds-check;-Wno-unused-label;-Wline-truncation>"
+$<$<Fortran_COMPILER_ID:Intel,IntelLLVM>:-O1>
+)
+# Gfortran doesn't work for -O0
+# Intel doesn't work for -O0, -O2, -O3
+
+add_executable(klatt
+handsy.for parcoe.for coewav.for setabc.for getamp.for
+)
+
+foreach(p AA AH OY)
+
+  add_test(NAME Generate:${p}
+  COMMAND $<TARGET_FILE:klatt> ${PROJECT_SOURCE_DIR}/docs-en/${p}.DOC ${PROJECT_BINARY_DIR}/${p}.raw)
+
+  set_tests_properties(Generate:${p} PROPERTIES
+  TIMEOUT 5
+  )
+
+endforeach()

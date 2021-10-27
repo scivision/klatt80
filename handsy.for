@@ -8,9 +8,14 @@ C
 C   IF THIS PROGRAM DOES NOT FIT INTO CORE, DECREASE D(10050),
 C   IWAVE(10050), AND WSIZE ALL BY THE SAME FRACTION
       program klatt80
-      use, intrinsic:: iso_fortran_env, only: int16, sp=>real32, 
+
+      use, intrinsic:: iso_fortran_env, only: int16, sp=>real32,
      &      stderr=>error_unit
+
       IMPLICIT INTEGER(int16) (A-Z)
+      implicit none (external)
+
+      external :: parcoe, coewav
 
       REAL(sp) DB,DBLPNT,EPSLON,XMAXWA
 C   EACH OF THE FOLLOWING VARIABLES HOLDS UP TO 5 ASCII CHARACTERS
@@ -65,20 +70,28 @@ C   SIZE OF PARAMETER AND WAVEFORM ARRAYS THAT RESIDE IN CORE
 C
 C   NAMES OF SOME RESPONSE CHARACTERS
         DATA QUIT,QUIT1,YES,NO,VAR,CON/'Q','Q','Y','N','V','C'/
-        
+
       print *, ' KLATT CASCADE/PARALLEL FORMANT SYMTHESIZER 6/1/79'
-        
+
+      if(command_argument_count() /= 2)
+     &  error stop "specify input and output filenames"
+
         call get_command_argument(1,buf,status=ios)
-        if(ios==0) then
-          paramfn=trim(buf)
-          interactive=.false.
-        else
-          goto 1140
-          interactive=.true.
-        endif
-        
-      
-        OPEN(newUNIT=u,FILE=paramfn,ACCESS='SEQUENTIAL',status='old')
+        if(ios/=0) error stop "please specify input file"
+        paramfn=trim(buf)
+        interactive=.false.
+        ! else
+        !   goto 1140
+        !   interactive=.true.
+        ! endif
+
+        call get_command_argument(2,buf,status=ios)
+        if(ios/=0) error stop "please specify output file"
+        outfn = trim(buf)
+
+
+        OPEN(newUNIT=u,FILE=paramfn,ACCESS='SEQUENTIAL',status='old',
+     &   action='read')
         OPENPA=1
         print *, 'READING INITIAL SYNTHESIZER CONFIGURATION: ',paramfn
 
@@ -90,8 +103,8 @@ C   NAMES OF SOME RESPONSE CHARACTERS
 1060    CONTINUE
 C
 C   CHANGE CONFIGURATION, CHANGE WHICH PARS ARE VARIABLE
-        if (command_argument_count() < 2) goto 1740
-  
+        if(.not. interactive) goto 1740
+
 1140    print *, 'PRINT AND/OR CHANGE CONFIGURATION (Y,Q):'
 1170    READ (5,1180,ERR=1140) ANSWER
 1180    FORMAT (A1)
@@ -244,7 +257,7 @@ C     PUT VARIABLE DATA FROM FILE PARAM.DOC INTO PARAMETER TRACKS
         NVAR1=NVAR1+1
         LOCSAV(NVAR1)=N
       enddo
-      
+
       IF (NVAR1 == 0) then
         write(stderr,*) 'ILLEGAL CONFIG, NO VARIABLE PARAMS'
         stop 1
@@ -262,7 +275,7 @@ C     ACCEPT MODIFICATIONS TO PARAMETER TRACKS
 2050    OLDTIM=0
         SETPNT=NO
         MAXD1=UTTDUR-DELTAT
-        
+
         if (.not.interactive) goto 2600
         print *,' NAME OF PARAMETER TRACK TO BE MODIFIED (QUIT="Q"):'
 2065    READ (5,1260,ERR=2090) NAMEV
@@ -304,7 +317,7 @@ C   MAKE SURE LEGAL TIME
 2340    FORMAT ('  V='$)
 2345    READ (5,1900) VALUE
 C
-C     SEE IF LEGAL VALUE 
+C     SEE IF LEGAL VALUE
 2369    IF (VALUE.LE.MAXV) GO TO 2400
 2370    WRITE (6,2371) MINV,MAXV
 2371    FORMAT (' VMIN=',I5,',  VMAX=',I5)
@@ -336,7 +349,7 @@ C   DRAW A LINE
 
 C   MAKE FILE OF PARAMETER VALUES VS TIME THAT CAN BE LISTED
 C   ON LINE PRINTER
-2600    OPEN(newUNIT=u,FILE='PARAM.DOC',ACCESS='SEQUENTIAL',
+2600    OPEN(newUNIT=u,FILE=outfn//'.doc',ACCESS='SEQUENTIAL',
      &       status='replace', action='readwrite')
         DO 2620 M=1,13
         N=M+13
@@ -369,13 +382,11 @@ C   ON LINE PRINTER
 2660    FORMAT (I5,26I5)
 2665    CONTINUE
         CLOSE(u)
-        WRITE (6,2667) 
-2667    FORMAT (' PARAMETER FILE  "PARAM.DOC"  SAVED')
+        print *, 'PARAMETER FILE SAVED: ',outfn//'.doc'
 C
 C   SET ALL PARAMETERS IN ARRAY IPAR TO DEFAULT VALUES
 2670    IF (PPSW.EQ.1) GO TO 2676
-        WRITE (6,2675)
-2675    FORMAT (/' BEGIN WAVEFORM GENERATION')
+        print *, 'BEGIN WAVEFORM GENERATION'
 2676    DO 2680 N=1,39
 2680    IPAR(N)=VALUES(N)
 C
@@ -386,7 +397,7 @@ C   INITIALIZE SYNTHESIZER
 C
 C   MAIN SYNTHESIZER LOOP, PUT WAVEFORM IN IWAVE(WSIZE1)
 C   ADD 20 MSEC TO DURATION TO ENSURE SIGNAL WILL DECAY TO ZERO
-        NPTS=(UTTDUR+20)/DELTAT        
+        NPTS=(UTTDUR+20)/DELTAT
         TIME1=0
         WSIZE1=1
         DO 2740 M=1,NPTS
@@ -397,7 +408,7 @@ C   ADD 20 MSEC TO DURATION TO ENSURE SIGNAL WILL DECAY TO ZERO
         CALL COEWAV(IWAVE(WSIZE1),XMAXWA)
 2740    WSIZE1=WSIZE1+NSAMP
 C
-C   MAKE SURE SIGNAL IS LESS THAN OR EQUAL TO 0.0 DB 
+C   MAKE SURE SIGNAL IS LESS THAN OR EQUAL TO 0.0 DB
         DB=20.*LOG10(XMAXWA/32767.)
         WRITE (6,2760) DB
 2760    FORMAT (' PEAK SIGNAL LEVEL ',
@@ -406,13 +417,12 @@ C
 C
 C   SAVE WAVEFORM FILE IWAVE(WSIZE1) ON DISK
 
-        outfn='wave.raw'
-        OPEN(newUNIT=u,FILE=outfn,ACCESS='stream',STATUS='replace', 
+        OPEN(newUNIT=u,FILE=outfn,ACCESS='stream',STATUS='replace',
      &       action='write')
         DO M=1,WSIZE1
           WRITE (u) IWAVE(M)
         enddo
         CLOSE (u)
-        
+
         print *, 'WAVEFORM FILE  ',outfn,'  SAVED.'
 2900    END

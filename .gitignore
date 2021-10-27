@@ -1,8 +1,4 @@
-build/
+build*/
+
 __pycache__/
 *.pyc
-klatt.exe
-*.raw
-*.wav
-klatt
-PARAM.DOC

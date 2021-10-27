@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import subprocess
 import argparse
 import shutil
@@ -9,13 +9,11 @@ try:
 except ImportError:
     show = None
 
-from klatt.playklatt import playklatt
-from klatt.plotklatt import plotklatt
-
-rawfn = "wave.raw"
+from klatt import load_klatt, playklatt, plotklatt
 
 R = Path(__file__).resolve().parent
-EXE = shutil.which("klatt", path=str(R / "build"))
+bindir = R / "build"
+EXE = shutil.which("klatt", path=bindir)
 
 
 def runklatt(phoneme: str, path: Path):
@@ -25,12 +23,15 @@ def runklatt(phoneme: str, path: Path):
     if not paramfn.is_file():
         raise SystemExit(f"{paramfn} not found")
 
-    subprocess.check_call([EXE, str(paramfn)])
+    rawfn = bindir / (paramfn.name + ".raw")
 
-    playklatt(rawfn)
+    subprocess.check_call([EXE, str(paramfn), str(rawfn)])
+
+    dat = load_klatt(rawfn)
+    playklatt(dat)
 
     if show is not None:
-        plotklatt(rawfn)
+        plotklatt(dat)
 
 
 if __name__ == "__main__":
