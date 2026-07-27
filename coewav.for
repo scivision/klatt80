@@ -14,13 +14,14 @@ C               OUTMA IS RETURN ARG INDICATING MAX ABSOL. VALUE OF WAVE
 C                 IF CALLING PROGRAM SETS TO -1., COEWAV IS INITIALIZED
 
         use, intrinsic:: iso_fortran_env, only: int16, sp=>real32
-        
+        implicit none (external)
+
         IMPLICIT INTEGER(int16) (I-N, W)
         IMPLICIT REAL(sp) (A-D, P, S, U, X,Y)
-        
-      INTEGER(int16), intent(inout) :: IWAVE(50)
-      real(sp), intent(inout) :: outma
-        
+
+        INTEGER(int16), intent(inout) :: IWAVE(50)
+        real(sp), intent(inout) :: outma
+
         REAL(sp) NOISE,INPUTS,INPUT,IMPULS, C(50)
 
         COMMON /COEFS/ C
@@ -85,7 +86,7 @@ C     ZERO MEMORY REGISTERS IN ALL RESONATORS
         YLGS4=0.
         YLGZ1=0.
         YLGZ2=0.
-C     ZERO ALL OTHER MEMORY REGISTERS 
+C     ZERO ALL OTHER MEMORY REGISTERS
         NPULSE=1
         MPULSE=0
         UGLOTX=0.
@@ -165,7 +166,7 @@ C     HIGH-PASS NOISE AT +6 DB/OCTAVE FOR RADIATION CHARACTERISTIC
 C          (TWO EFFECTS CANCEL ONE ANOTHER)
 C     GLOTTAL SOURCE VOLUME VELOCITY = VOICING+ASPIRATION
         AASPIR=AASPIR+DAHH
-        UASP=AASPIR*NOISE 
+        UASP=AASPIR*NOISE
 380     UGLOT=UGLOT+UASP
 C     SET FRICATION SOURCE VOLUME VELOCETY
 390     AFRIC=AFRIC+DAFF

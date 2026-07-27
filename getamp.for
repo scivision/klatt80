@@ -5,12 +5,12 @@ C               (TRUNCATE NDB IF OUTSIDE RANGE)
 C
         elemental real FUNCTION GETAMP(NDB)
         use, intrinsic:: iso_fortran_env, only: int16, sp=>real32
-        implicit none
-        
+        implicit none (type, external)
+
         INTEGER(int16), intent(in) :: NDB
         integer(int16) :: NDB1, NDB2, NDB3
         REAL(sp) ::  XX1, XX2
-        
+
         real(sp), parameter :: DTABLE(11) =
      &    [1.8,1.6,1.43,1.26,1.12,
      &     1.0,0.89,0.792,0.702,0.623,0.555]

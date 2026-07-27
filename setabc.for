@@ -5,8 +5,8 @@ C       DIFFERENCE EQUATION CONSTANTS
 
         elemental SUBROUTINE SETABC(F,FB,A,B,C)
         use, intrinsic:: iso_fortran_env, only: int16, sp=>real32
-        implicit none
-        
+        implicit none (type, external)
+
         INTEGER(int16), intent(in) :: F,FB
         REAL(sp), intent(out) :: A, B, C
         real(sp) R, PIT, TWOPIT
