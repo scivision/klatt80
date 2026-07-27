@@ -8,7 +8,6 @@ Klatt Cascade-Parallel Formant Synthesizer
 This software is a speech synthesizer designed by Dennis Klatt in 1980.
 
 The original routines are programmed for DEC PDP-11 FORTRAN, and code was updated for generic modern Fortran compilers.
-Due to old / unstable progamming techniques, compiler optimization option `-O1` is typically necessary.
 
 Assuming you have a Fortran compiler and CMake, build:
 
