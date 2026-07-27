@@ -6,7 +6,7 @@ from pathlib import Path
 FS = 10000
 
 
-def load_klatt(fn: Path) -> np.ndarray:
+def load_klatt(fn: Path):
 
     dat = np.fromfile(fn, np.int16)
 
@@ -15,13 +15,13 @@ def load_klatt(fn: Path) -> np.ndarray:
     return dat
 
 
-def raw2wav(dat: np.ndarray, wavfn: Path):
+def raw2wav(dat, wavfn: Path):
     import scipy.io.wavfile
 
     scipy.io.wavfile.write(wavfn, FS, dat)
 
 
-def playklatt(dat: np.ndarray):
+def playklatt(dat):
     import sounddevice
 
     sounddevice.play(dat, FS)
@@ -29,7 +29,7 @@ def playklatt(dat: np.ndarray):
     time.sleep(1.0)
 
 
-def plotklatt(dat: np.ndarray):
+def plotklatt(dat):
     from matplotlib.pyplot import figure
 
     t = np.arange(0, dat.size / FS, 1 / FS)

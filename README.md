@@ -1,4 +1,4 @@
-# klatt80
+# klatt80 Klatt Cascade-Parallel Formant Synthesizer
 
 ![Actions Status](https://github.com/scivision/klatt80/workflows/ci/badge.svg)
 
@@ -34,6 +34,11 @@ allows specifying a parameter file at the command line.
 
 The output is a signed 16-bit integer rawfile at 10 kHz sample rate.
 This file is read by an audio analysis program or converted to WAV.
+A convenient program to do so is SoX:
+
+* Windows: `winget install ChrisBagwell.SoX`
+* macOS: `brew install sox`
+* Linux: `apt install sox`
 
 ## Notes
 
