@@ -7,8 +7,7 @@ LANGUAGES Fortran
 enable_testing()
 
 add_compile_options(
-"$<$<Fortran_COMPILER_ID:GNU>:-O1;-std=legacy;-fimplicit-none;-fbounds-check;-Wno-unused-label;-Wline-truncation>"
-$<$<Fortran_COMPILER_ID:Intel,IntelLLVM>:-O1>
+"$<$<Fortran_COMPILER_ID:GNU>:-std=legacy;-fimplicit-none;-fbounds-check;-Wno-unused-label;-Wline-truncation>"
 )
 # Gfortran doesn't work for -O0
 # Intel doesn't work for -O0, -O2, -O3

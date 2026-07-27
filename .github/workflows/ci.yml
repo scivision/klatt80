@@ -9,6 +9,7 @@ on:
 
 env:
   CMAKE_GENERATOR: Ninja
+  CMAKE_BUILD_TYPE: Release
 
 jobs:
 
